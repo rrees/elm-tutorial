@@ -1,6 +1,7 @@
 module Counter where
 
 import Html exposing (..)
+import Html.Events exposing (onClick)
 
 type alias Model = Int
 
@@ -17,7 +18,7 @@ view: Signal.Address Action -> Model -> Html
 view address model =
     div []
         [
-            button [] [text "Minus"],
+            button [onClick address Decrement] [text "Minus"],
             span [] [text (toString model)],
-            button [] [text "Plus"]
+            button [onClick address Increment] [text "Plus"]
         ]
