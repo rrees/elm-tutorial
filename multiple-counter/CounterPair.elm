@@ -4,23 +4,42 @@ import Counter exposing (Model)
 import Html exposing (..)
 import Html.Events exposing (onClick)
 
-type alias Model = Int
+type alias Model =
+    {
+        top : Counter.Model,
+        bottom : Counter.Model
+    }
 
 
-type Action = Increment | Decrement
+init : Int -> Int -> Model
+init initialTop initialBottom =
+    {
+        top = Counter.init initialTop,
+        bottom = Counter.init initialBottom
+    }
+
+type Action = Top Counter.Action
+    | Bottom Counter.Action
 
 update : Action -> Model -> Model
 update action model =
     case action of
-        Increment -> model + 1
-        Decrement -> model - 1
+        Top act ->
+        {
+            model |
+                top <- Counter.update act model.top
+        }
+        Bottom act ->
+        {
+            model |
+                bottom <- Counter.update act model.bottom
+        }
 
 view: Signal.Address Action -> Model -> Html
 view address model =
     div []
         [
-            button [onClick address Decrement] [text "Minus"],
-            span [] [text (toString model)],
-            button [onClick address Increment] [text "Plus"],
+            Counter.view (Signal.forwardTo address Top) model.top,
+            Counter.view (Signal.forwardTo address Bottom) model.bottom,
             button [] [text "Reset"]
         ]

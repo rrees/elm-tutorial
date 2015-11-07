@@ -812,9 +812,12 @@ Elm.Counter.make = function (_elm) {
             case "Increment":
             return model + 1;}
          _U.badCase($moduleName,
-         "between lines 13 and 15");
+         "between lines 16 and 18");
       }();
    });
+   var init = function (i) {
+      return i;
+   };
    var Decrement = {ctor: "Decrement"};
    var Increment = {ctor: "Increment"};
    var view = F2(function (address,
@@ -838,6 +841,7 @@ Elm.Counter.make = function (_elm) {
    _elm.Counter.values = {_op: _op
                          ,Increment: Increment
                          ,Decrement: Decrement
+                         ,init: init
                          ,update: update
                          ,view: view};
    return _elm.Counter.values;
@@ -854,8 +858,8 @@ Elm.CounterPair.make = function (_elm) {
    _L = _N.List.make(_elm),
    $moduleName = "CounterPair",
    $Basics = Elm.Basics.make(_elm),
+   $Counter = Elm.Counter.make(_elm),
    $Html = Elm.Html.make(_elm),
-   $Html$Events = Elm.Html.Events.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
@@ -864,40 +868,63 @@ Elm.CounterPair.make = function (_elm) {
    model) {
       return function () {
          switch (action.ctor)
-         {case "Decrement":
-            return model - 1;
-            case "Increment":
-            return model + 1;}
+         {case "Bottom":
+            return _U.replace([["bottom"
+                               ,A2($Counter.update,
+                               action._0,
+                               model.bottom)]],
+              model);
+            case "Top":
+            return _U.replace([["top"
+                               ,A2($Counter.update,
+                               action._0,
+                               model.top)]],
+              model);}
          _U.badCase($moduleName,
-         "between lines 14 and 16");
+         "between lines 26 and 36");
       }();
    });
-   var Decrement = {ctor: "Decrement"};
-   var Increment = {ctor: "Increment"};
+   var Bottom = function (a) {
+      return {ctor: "Bottom"
+             ,_0: a};
+   };
+   var Top = function (a) {
+      return {ctor: "Top",_0: a};
+   };
    var view = F2(function (address,
    model) {
       return A2($Html.div,
       _L.fromArray([]),
-      _L.fromArray([A2($Html.button,
-                   _L.fromArray([A2($Html$Events.onClick,
+      _L.fromArray([A2($Counter.view,
+                   A2($Signal.forwardTo,
                    address,
-                   Decrement)]),
-                   _L.fromArray([$Html.text("Minus")]))
-                   ,A2($Html.span,
-                   _L.fromArray([]),
-                   _L.fromArray([$Html.text($Basics.toString(model))]))
-                   ,A2($Html.button,
-                   _L.fromArray([A2($Html$Events.onClick,
+                   Top),
+                   model.top)
+                   ,A2($Counter.view,
+                   A2($Signal.forwardTo,
                    address,
-                   Increment)]),
-                   _L.fromArray([$Html.text("Plus")]))
+                   Bottom),
+                   model.bottom)
                    ,A2($Html.button,
                    _L.fromArray([]),
                    _L.fromArray([$Html.text("Reset")]))]));
    });
+   var init = F2(function (initialTop,
+   initialBottom) {
+      return {_: {}
+             ,bottom: $Counter.init(initialBottom)
+             ,top: $Counter.init(initialTop)};
+   });
+   var Model = F2(function (a,b) {
+      return {_: {}
+             ,bottom: b
+             ,top: a};
+   });
    _elm.CounterPair.values = {_op: _op
-                             ,Increment: Increment
-                             ,Decrement: Decrement
+                             ,Model: Model
+                             ,init: init
+                             ,Top: Top
+                             ,Bottom: Bottom
                              ,update: update
                              ,view: view};
    return _elm.CounterPair.values;
@@ -3661,7 +3688,9 @@ Elm.Main.make = function (_elm) {
    $Signal = Elm.Signal.make(_elm),
    $StartApp$Simple = Elm.StartApp.Simple.make(_elm);
    var main = $StartApp$Simple.start({_: {}
-                                     ,model: 0
+                                     ,model: A2($CounterPair.init,
+                                     0,
+                                     0)
                                      ,update: $CounterPair.update
                                      ,view: $CounterPair.view});
    _elm.Main.values = {_op: _op

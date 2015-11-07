@@ -8,6 +8,9 @@ type alias Model = Int
 
 type Action = Increment | Decrement
 
+init : Int -> Model
+init i = i
+
 update : Action -> Model -> Model
 update action model =
     case action of
