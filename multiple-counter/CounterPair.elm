@@ -18,12 +18,14 @@ init initialTop initialBottom =
         bottom = Counter.init initialBottom
     }
 
-type Action = Top Counter.Action
+type Action = Reset
+    | Top Counter.Action
     | Bottom Counter.Action
 
 update : Action -> Model -> Model
 update action model =
     case action of
+        Reset -> init 0 0
         Top act ->
         {
             model |
@@ -41,5 +43,5 @@ view address model =
         [
             Counter.view (Signal.forwardTo address Top) model.top,
             Counter.view (Signal.forwardTo address Bottom) model.bottom,
-            button [] [text "Reset"]
+            button [onClick address Reset] [text "Reset"]
         ]

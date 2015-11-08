@@ -860,30 +860,11 @@ Elm.CounterPair.make = function (_elm) {
    $Basics = Elm.Basics.make(_elm),
    $Counter = Elm.Counter.make(_elm),
    $Html = Elm.Html.make(_elm),
+   $Html$Events = Elm.Html.Events.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm);
-   var update = F2(function (action,
-   model) {
-      return function () {
-         switch (action.ctor)
-         {case "Bottom":
-            return _U.replace([["bottom"
-                               ,A2($Counter.update,
-                               action._0,
-                               model.bottom)]],
-              model);
-            case "Top":
-            return _U.replace([["top"
-                               ,A2($Counter.update,
-                               action._0,
-                               model.top)]],
-              model);}
-         _U.badCase($moduleName,
-         "between lines 26 and 36");
-      }();
-   });
    var Bottom = function (a) {
       return {ctor: "Bottom"
              ,_0: a};
@@ -891,6 +872,7 @@ Elm.CounterPair.make = function (_elm) {
    var Top = function (a) {
       return {ctor: "Top",_0: a};
    };
+   var Reset = {ctor: "Reset"};
    var view = F2(function (address,
    model) {
       return A2($Html.div,
@@ -906,7 +888,9 @@ Elm.CounterPair.make = function (_elm) {
                    Bottom),
                    model.bottom)
                    ,A2($Html.button,
-                   _L.fromArray([]),
+                   _L.fromArray([A2($Html$Events.onClick,
+                   address,
+                   Reset)]),
                    _L.fromArray([$Html.text("Reset")]))]));
    });
    var init = F2(function (initialTop,
@@ -914,6 +898,29 @@ Elm.CounterPair.make = function (_elm) {
       return {_: {}
              ,bottom: $Counter.init(initialBottom)
              ,top: $Counter.init(initialTop)};
+   });
+   var update = F2(function (action,
+   model) {
+      return function () {
+         switch (action.ctor)
+         {case "Bottom":
+            return _U.replace([["bottom"
+                               ,A2($Counter.update,
+                               action._0,
+                               model.bottom)]],
+              model);
+            case "Reset": return A2(init,
+              0,
+              0);
+            case "Top":
+            return _U.replace([["top"
+                               ,A2($Counter.update,
+                               action._0,
+                               model.top)]],
+              model);}
+         _U.badCase($moduleName,
+         "between lines 27 and 38");
+      }();
    });
    var Model = F2(function (a,b) {
       return {_: {}
@@ -923,6 +930,7 @@ Elm.CounterPair.make = function (_elm) {
    _elm.CounterPair.values = {_op: _op
                              ,Model: Model
                              ,init: init
+                             ,Reset: Reset
                              ,Top: Top
                              ,Bottom: Bottom
                              ,update: update
